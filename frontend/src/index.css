@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+  --color-brand-dark: #0B0D17;
+  --color-brand-card: #16192B;
+  --color-brand-blue: #2D6BFF;
+  --color-brand-glow: #1A3B8A;
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-dark);
+    color: white;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    /* Main glow background */
+    background-image: radial-gradient(circle at 50% 30%, var(--color-brand-glow) 0%, transparent 40%),
+                      radial-gradient(circle at 50% 80%, var(--color-brand-glow) 0%, transparent 40%);
+    background-attachment: fixed;
+    background-size: cover;
+  }
+}
+
+@layer utilities {
+  .bg-glow {
+    position: relative;
+  }
+  .bg-glow::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(circle at center, var(--color-brand-blue), transparent 70%);
+    opacity: 0.15;
+    z-index: -1;
+    border-radius: inherit;
+    filter: blur(20px);
+  }
+}

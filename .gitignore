@@ -1,0 +1,14 @@
+# Virtual Environments
+backend/venv/
+backend/__pycache__/
+.env
+
+# MacOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Large Model files (if any)
+*.pkl
