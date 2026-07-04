@@ -3,6 +3,8 @@ import UploadBox from './components/UploadBox';
 import ResultCard from './components/ResultCard';
 import FeatureGrid from './components/FeatureGrid';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 function App() {
   const [imageFile, setImageFile] = useState(null);
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -44,7 +46,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch(`${API_URL}/predict`, {
         method: 'POST',
         body: formData,
       });
@@ -75,7 +77,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/predict-url', {
+      const response = await fetch(`${API_URL}/predict-url`, {
         method: 'POST',
         body: formData,
       });
