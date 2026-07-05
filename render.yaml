@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: thumbnail-ctr-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false # You will provide the Hugging Face URL in the Render dashboard
