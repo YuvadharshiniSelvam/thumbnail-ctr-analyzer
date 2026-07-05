@@ -8,7 +8,11 @@ from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
 
 # Initialize Haar cascade and EasyOCR reader globally for performance
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+try:
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+except AttributeError as e:
+    print(f"Warning: OpenCV CascadeClassifier not available. Face detection disabled. Error: {e}")
+    face_cascade = None
 reader = easyocr.Reader(['en'], gpu=False, verbose=False)
 
 # Initialize CLIP model and processor globally for performance (lazy-loaded)
@@ -39,6 +43,8 @@ def get_contrast(image):
 
 def detect_face(image):
     """Return True if at least one face is detected."""
+    if face_cascade is None:
+        return False
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
     return len(faces) > 0
