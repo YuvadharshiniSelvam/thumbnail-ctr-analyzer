@@ -4,8 +4,24 @@ from pydantic import BaseModel
 import os
 import numpy as np
 import requests
+from requests.adapters import HTTPAdapter
 import re
+import ssl
 import certifi
+
+# Custom SSL adapter to fix UNEXPECTED_EOF_WHILE_READING errors from YouTube
+class SSLAdapter(HTTPAdapter):
+    def init_poolmanager(self, *args, **kwargs):
+        ctx = ssl.create_default_context(cafile=certifi.where())
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+        kwargs['ssl_context'] = ctx
+        return super().init_poolmanager(*args, **kwargs)
+
+# Create a persistent session with the custom SSL adapter
+http_session = requests.Session()
+http_session.mount('https://', SSLAdapter())
+http_session.headers.update({'User-Agent': 'Mozilla/5.0 (compatible; ThumbnailAnalyzer/1.0)'})
 
 # Import the feature extraction function
 from features import extract_features, get_clip_model
@@ -106,11 +122,11 @@ async def predict_url(url: str = Form(...), title: str = Form(None)):
     thumbnail_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
     
     try:
-        response = requests.get(thumbnail_url, verify=certifi.where())
+        response = http_session.get(thumbnail_url)
         if response.status_code != 200:
             # Fallback to standard quality
             thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-            response = requests.get(thumbnail_url, verify=certifi.where())
+            response = http_session.get(thumbnail_url)
             if response.status_code != 200:
                 raise HTTPException(status_code=400, detail="Could not fetch thumbnail for this video.")
         
