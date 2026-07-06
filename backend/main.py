@@ -5,6 +5,7 @@ import os
 import numpy as np
 import requests
 import re
+import certifi
 
 # Import the feature extraction function
 from features import extract_features, get_clip_model
@@ -105,11 +106,11 @@ async def predict_url(url: str = Form(...), title: str = Form(None)):
     thumbnail_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
     
     try:
-        response = requests.get(thumbnail_url)
+        response = requests.get(thumbnail_url, verify=certifi.where())
         if response.status_code != 200:
             # Fallback to standard quality
             thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-            response = requests.get(thumbnail_url)
+            response = requests.get(thumbnail_url, verify=certifi.where())
             if response.status_code != 200:
                 raise HTTPException(status_code=400, detail="Could not fetch thumbnail for this video.")
         
